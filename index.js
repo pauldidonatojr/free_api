@@ -44,23 +44,42 @@ app.listen(process.env.PORT || 5000,  () => {
 // });
 
 
-const fetch = () => {
-    const url = `https://tokenfomo.io/api/tokens/eth?limit=1&apikey=0e14821c9127c495bf15d690dc02a96386980392`
-    const res = new XMLHttpRequest()
-    if (true) {
-    res.open('GET', url)
-    res.send()
-    res.addEventListener('load', function () {
-        const [data] = JSON.parse(this.responseText)
-        console.log(data)
+// const fetch = () => {
+//     const url = `https://tokenfomo.io/api/tokens/eth?limit=1&apikey=0e14821c9127c495bf15d690dc02a96386980392`
+//     const res = new XMLHttpRequest()
+//     if (true) {
+//     res.open('GET', url)
+//     res.send()
+//     res.addEventListener('load', function () {
+//         const [data] = JSON.parse(this.responseText)
+//         console.log(data)
 
-        })
-    }
-}
+//         })
+//     }
+// }
+
+// const store = []
 
 bot.on('message', (msg) => {
-    fetch()
+  const url = `https://tokenfomo.io/api/tokens/eth?limit=1&apikey=0e14821c9127c495bf15d690dc02a96386980392`
+  const res = new XMLHttpRequest()
+  res.open('GET', url)
+  res.send()
+  res.addEventListener('load', function () {
+    const [data] = JSON.parse(this.responseText)
+    const {network, addr, name, symbol, timestamp } = data
 
-    bot.sendMessage(msg.chat.id, )
+    // store.push(tok)
+    // console.log(store)
+    bot.sendMessage(msg.chat.id,  `Token: ${name}\n \n Network: ${network}\n \n Address: ${addr}\n \n Symbol: ${symbol}\n \n Timestamp: ${timestamp}
+    `, {parse_mode : "HTML"})
+    })
+
+
+
+
+  //
 
 })
+
+
