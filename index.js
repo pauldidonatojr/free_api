@@ -1,5 +1,6 @@
 require('dotenv').config()
 const express = require('express')
+const moment =  require('moment')
 // const bodyParser = require('body-parser')
 // const axios = require('axios')
 const TelegramBot = require('node-telegram-bot-api')
@@ -8,21 +9,9 @@ var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 
 const {TOKEN, SERVER_URL} = process.env
-// const TELEGRAM_API = `https://api.telegram.org/bot${TOKEN}`
-// const URI = `/webhook/${TOKEN}`
-// const WEBHOOK_URL = SERVER_URL+URI
-
 const app = express();
 // parse the updates to JSON
 app.use(express.json());
-
-// const init = async () => {
-//     const res = await axios.get(`${TELEGRAM_API}/setWebhook?url=${WEBHOOK_URL}`)
-//     console.log(res.data)
-// }
-
-
-
 // No need to pass any parameters as we will handle the updates with Express
 const bot = new TelegramBot(TOKEN);
 bot.setWebHook(`${SERVER_URL}/bot${TOKEN}`)
@@ -38,42 +27,30 @@ app.listen(process.env.PORT || 5000,  () => {
 
 });
 
-// Just to ping!
-// bot.on('message', msg => {
-//   bot.sendMessage(msg.chat.id, 'I am alive!');
-// });
-
-
-// const fetch = () => {
-//     const url = `https://tokenfomo.io/api/tokens/eth?limit=1&apikey=0e14821c9127c495bf15d690dc02a96386980392`
-//     const res = new XMLHttpRequest()
-//     if (true) {
-//     res.open('GET', url)
-//     res.send()
-//     res.addEventListener('load', function () {
-//         const [data] = JSON.parse(this.responseText)
-//         console.log(data)
-
-//         })
-//     }
-// }
 
 // const store = []
 
-bot.on('message', (msg) => {
-  const url = `https://tokenfomo.io/api/tokens/eth?limit=1&apikey=0e14821c9127c495bf15d690dc02a96386980392`
+bot.onText(/\/run/, (msg) => {
+  const url = `https://tokenfomo.io/api/tokens/eth?limit=8&apikey=0e14821c9127c495bf15d690dc02a96386980392`
   const res = new XMLHttpRequest()
   res.open('GET', url)
   res.send()
   res.addEventListener('load', function () {
-    const [data] = JSON.parse(this.responseText)
+    const data = JSON.parse(this.responseText)
     const {network, addr, name, symbol, timestamp } = data
-
+    console.log(data)
     // store.push(tok)
     // console.log(store)
-    bot.sendMessage(msg.chat.id,  `Token: ${name}\n \n Network: ${network}\n \n Address: ${addr}\n \n Symbol: ${symbol}\n \n Timestamp: ${timestamp}
-    `, {parse_mode : "HTML"})
-    })
+
+    data.forEach((d => {
+      bot.sendMessage(msg.chat.id,  `|------------------------| \n Token: ${d.name}\n \n Network: ${d.network}\n \n Address: ${d.addr}\n \n Symbol: ${d.symbol}\n \n Timestamp: ${moment(d.timestamp.createdAt).format("YYYY-MMM-DD, h:mm:ss a")}
+      \n |------------------------|`, {parse_mode : "HTML"})
+    }))
+})
+
+    // bot.sendMessage(msg.chat.id,  `Token: ${name.toString()}\n \n Network: ${network.toString()}\n \n Address: ${addr.toString()}\n \n Symbol: ${symbol.toString()}\n \n Timestamp: ${moment(timestamp.createdAt).format("YYYY-MMM-DD, h:mm:ss a")}
+    // `, {parse_mode : "HTML"})
+    // })
 
 
 
